@@ -10,9 +10,9 @@ public interface CustomerService{
 	CustomerEntity saveCustomer(CustomerEntity customerEntity);
 
 	Optional<CustomerEntity> getCustomerById(Long customerId);
+	
+	Optional<CustomerEntity> findById(Long customerId);
 
-	CustomerEntity updateCustomerById(Long customerId, CustomerEntity customerEntity);
-
-	void deleteCustomerById(Long customerId);
+	void deleteCustomerById(Long customerId);	
 
 }

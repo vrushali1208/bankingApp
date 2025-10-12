@@ -26,25 +26,15 @@ public class CustomerServiceImpl implements CustomerService {
 	public Optional<CustomerEntity> getCustomerById(Long customerId) {
 		return customerRepository.findById(customerId);
 	}
-
+	
 	@Override
-	public CustomerEntity updateCustomerById(Long customerId, CustomerEntity customerEntity) {
-		CustomerEntity customer = customerRepository.findById(customerId).orElseThrow();
-		customer.setFname(customerEntity.getFname());
-		customer.setLname(customerEntity.getLname());
-		customer.setEmail(customerEntity.getEmail());
-		customer.setPhoneNo(customerEntity.getPhoneNo());
-		customer.setAddress(customerEntity.getAddress());
-		customer.setDob(customerEntity.getDob());
-		customer.setPanNumber(customerEntity.getPanNumber());
-		customer.setStatus(customerEntity.getStatus());
-		customer.setCreatedDate(customerEntity.getCreatedDate());
-		CustomerEntity updateCustomerById = customerRepository.save(customer);
-		return updateCustomerById;
+	public Optional<CustomerEntity> findById(Long customerId) {
+		return customerRepository.findById(customerId);
 	}
 
 	@Override
 	public void deleteCustomerById(Long customerId) {
 		customerRepository.deleteById(customerId);
 	}
+
 }

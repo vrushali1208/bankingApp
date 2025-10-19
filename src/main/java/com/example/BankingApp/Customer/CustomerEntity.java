@@ -1,13 +1,21 @@
 package com.example.BankingApp.Customer;
 
 import java.util.Date;
+import java.util.List;
 
+import com.example.BankingApp.Account.AccountEntity;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "customer")
@@ -22,12 +30,18 @@ public class CustomerEntity {
     )
     private Long customerId;
 	
+	@NotBlank(message = "First name is required")
 	private String fname;
 	
+	@NotBlank(message = "Last name is required")
 	private String lname;
 	
+	@NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
 	private String email;
 	
+	@NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
 	private String phoneNo;
 	
 	private String address;
@@ -41,6 +55,9 @@ public class CustomerEntity {
 	private String status;
 	
 	private Date createdDate;
+	
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<AccountEntity> accounts;
 	
 	public CustomerEntity() {
 		super();

@@ -8,8 +8,6 @@ public interface CustomerService{
 	List<CustomerEntity> getAllCustomers();
 
 	CustomerEntity saveCustomer(CustomerEntity customerEntity);
-
-	Optional<CustomerEntity> getCustomerById(Long customerId);
 	
 	Optional<CustomerEntity> findById(Long customerId);
 

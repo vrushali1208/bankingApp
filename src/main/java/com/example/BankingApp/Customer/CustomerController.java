@@ -17,56 +17,58 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.BankingApp.Response.ApiResponse;
 
+import jakarta.validation.Valid;
+
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/customer")
 public class CustomerController {
 	
 	@Autowired
 	CustomerService customerService;
 	
 	@GetMapping("/")
-	public String get() {
-		return "Welcome to Banking App";
+	public ResponseEntity<?> welcome() {
+		return ResponseEntity.ok(new ApiResponse<>("Welcome to Banking App", null));
 	}
 	
 	@GetMapping("/all/customers")
 	public ResponseEntity<?> getAllCustomers() {
 		List<CustomerEntity> customers = customerService.getAllCustomers();
 		if(customers.isEmpty()) {
-			return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(new ApiResponse<>("Customers are not available!!!", customers));
+			return ResponseEntity.ok(new ApiResponse<>("No Customers found!!!", customers));
 		}
 		else {
-			return ResponseEntity
-	                .status(HttpStatus.OK)
-	                .body(new ApiResponse<>("Customers fetched Successfully!!!", customers));
+			return ResponseEntity.ok(new ApiResponse<>("Customers fetched Successfully!!!", customers));
 		} 
 	}
 	
 	@PostMapping("/new")
-	public ResponseEntity<String> createCustomer(@RequestBody CustomerEntity customerEntity) {
-		customerService.saveCustomer(customerEntity);
-		return ResponseEntity.ok("Customer Saved Successfully!!!");
-	}
-	
-	@GetMapping("/customer/{customerId}")
+    public ResponseEntity<?> saveCustomer(@Valid @RequestBody CustomerEntity customerEntity) {
+		CustomerEntity savedCustomer = customerService.saveCustomer(customerEntity);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Customer saved successfully", savedCustomer));
+    }
+
+	@GetMapping("/{customerId}")
 	public ResponseEntity<?> getCustomerById(@PathVariable Long customerId){
-		Optional<CustomerEntity> customerById = customerService.getCustomerById(customerId);
+		Optional<CustomerEntity> customerById = customerService.findById(customerId);
 		if(customerById.isPresent()) {
-			return ResponseEntity.ok(customerById.get());
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(new ApiResponse<>("Customer FOund Successfully!!!", customerById.get()));
 		}
 		else
 		{
-			return ResponseEntity.
-					status(HttpStatus.NOT_FOUND).
-					body("Customer with Id " + customerId + " not found!!!");		
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body(new ApiResponse<>("Customer with Id " + customerId + " not found!!!", null));		
 		}
 	}
 
-	@PutMapping("/customer/{customerId}")
-	public ResponseEntity<?> updateCustomerById(@PathVariable Long customerId, @RequestBody CustomerEntity customerEntity){
+	@PutMapping("/{customerId}")
+	public ResponseEntity<?> updateCustomerById(@PathVariable Long customerId, @Valid @RequestBody CustomerEntity customerEntity){
 		Optional<CustomerEntity> existingCustomer = customerService.findById(customerId);
 		if(existingCustomer.isPresent()) {
 			CustomerEntity customer = existingCustomer.get();
@@ -85,11 +87,11 @@ public class CustomerController {
 		else {
 			return ResponseEntity
 					.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponse<>("Customer not found with Id " +customerId, null));
+					.body(new ApiResponse<>("Customer with Id " + customerId + " not found!!", null));
 		}
 	}
 		
-	@DeleteMapping("/customer/{customerId}")
+	@DeleteMapping("/{customerId}")
 	public ResponseEntity<?> deleteCustomerById(@PathVariable Long customerId){
 		Optional<CustomerEntity> existingCustomer = customerService.findById(customerId);
 		if(existingCustomer.isPresent()) {
@@ -99,7 +101,7 @@ public class CustomerController {
 		else {
 			return ResponseEntity
 					.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponse<>("Customer not found with ID: " + customerId, null));
+					.body(new ApiResponse<>("Customer with Id " + customerId + " not found!!!", null));
 		}
 	}
 }

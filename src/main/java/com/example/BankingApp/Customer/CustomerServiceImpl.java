@@ -18,18 +18,21 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerEntity saveCustomer(CustomerEntity customerEntity) {
-		return customerRepository.save(customerEntity);
-	}
-	
-	@Override
 	public Optional<CustomerEntity> findById(Long customerId) {
 		return customerRepository.findById(customerId);
 	}
 
 	@Override
+	public CustomerEntity saveCustomer(CustomerEntity customerEntity) {
+		return customerRepository.save(customerEntity);
+	}
+
+	@Override
 	public void deleteCustomerById(Long customerId) {
 		customerRepository.deleteById(customerId);
+		
 	}
+	
+	
 
 }

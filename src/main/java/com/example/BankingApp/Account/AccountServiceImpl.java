@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
@@ -34,7 +33,9 @@ public class AccountServiceImpl implements AccountService {
 	public List<AccountEntity> getAccountDetailsByCustomer(Long customerId) {
 		return accountRepository.findByCustomerCustomerId(customerId);
 	}
-	
-	
 
+	@Override
+	public void deleteAccountById(Long accountId) {
+		accountRepository.deleteById(accountId);
+	}
 }

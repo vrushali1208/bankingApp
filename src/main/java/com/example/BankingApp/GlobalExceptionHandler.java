@@ -13,17 +13,28 @@ import com.example.BankingApp.Response.ApiResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+	@ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleResourceNotFound(ResourceNotFoundException ex) {
+        ApiResponse<Object> response = new ApiResponse<>(ex.getMessage(), null, false);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponse<>("Validation failed: " + errors, null));
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Object>> handleGeneralException(Exception ex) {
+        ApiResponse<Object> response = new ApiResponse<>("Internal Server Error", null, false);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException ex) {
+        String errors = ex.getBindingResult()
+                          .getFieldErrors()
+                          .stream()
+                          .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                          .collect(Collectors.joining(", "));
+
+        ApiResponse<Object> response = new ApiResponse<>("Validation failed: " + errors, null, false);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 }

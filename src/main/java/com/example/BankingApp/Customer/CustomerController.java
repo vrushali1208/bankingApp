@@ -1,7 +1,6 @@
 package com.example.BankingApp.Customer;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.BankingApp.ResourceNotFoundException;
 import com.example.BankingApp.Response.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -25,84 +25,62 @@ import jakarta.validation.Valid;
 public class CustomerController {
 	
 	@Autowired
-	CustomerService customerService;
+	private CustomerService customerService;
 	
 	@GetMapping("/")
-	public ResponseEntity<?> welcome() {
-		return ResponseEntity.ok(new ApiResponse<>("Welcome to Banking App", null));
+	public String get() {
+		return "Welcome to Customer Banking App";
 	}
 	
 	@GetMapping("/all/customers")
-	public ResponseEntity<?> getAllCustomers() {
+	public ResponseEntity<ApiResponse<List<CustomerEntity>>> getAllCustomers() {
 		List<CustomerEntity> customers = customerService.getAllCustomers();
-		if(customers.isEmpty()) {
-			return ResponseEntity.ok(new ApiResponse<>("No Customers found!!!", customers));
-		}
-		else {
-			return ResponseEntity.ok(new ApiResponse<>("Customers fetched Successfully!!!", customers));
-		} 
+		ApiResponse<List<CustomerEntity>> response = new ApiResponse<>("All Customers fetched Successfully!!!", customers, true);
+		return ResponseEntity.ok(response);
 	}
 	
-	@PostMapping("/new")
-    public ResponseEntity<?> saveCustomer(@Valid @RequestBody CustomerEntity customerEntity) {
-		CustomerEntity savedCustomer = customerService.saveCustomer(customerEntity);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Customer saved successfully", savedCustomer));
-    }
-
 	@GetMapping("/{customerId}")
-	public ResponseEntity<?> getCustomerById(@PathVariable Long customerId){
-		Optional<CustomerEntity> customerById = customerService.findById(customerId);
-		if(customerById.isPresent()) {
-			return ResponseEntity
-					.status(HttpStatus.OK)
-					.body(new ApiResponse<>("Customer FOund Successfully!!!", customerById.get()));
-		}
-		else
-		{
-			return ResponseEntity
-					.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponse<>("Customer with Id " + customerId + " not found!!!", null));		
-		}
-	}
-
-	@PutMapping("/{customerId}")
-	public ResponseEntity<?> updateCustomerById(@PathVariable Long customerId, @Valid @RequestBody CustomerEntity customerEntity){
-		Optional<CustomerEntity> existingCustomer = customerService.findById(customerId);
-		if(existingCustomer.isPresent()) {
-			CustomerEntity customer = existingCustomer.get();
-			customer.setFname(customerEntity.getFname());
-			customer.setLname(customerEntity.getLname());
-			customer.setEmail(customerEntity.getEmail());
-			customer.setPhoneNo(customerEntity.getPhoneNo());
-			customer.setAddress(customerEntity.getAddress());
-			customer.setDob(customerEntity.getDob());
-			customer.setPanNumber(customerEntity.getPanNumber());
-			customer.setStatus(customerEntity.getStatus());
-			customer.setCreatedDate(customerEntity.getCreatedDate());
-			customerService.saveCustomer(customer);
-			return ResponseEntity.ok(new ApiResponse<>("Customer Updated Successfully!!", customer));
-		}
-		else {
-			return ResponseEntity
-					.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponse<>("Customer with Id " + customerId + " not found!!", null));
-		}
+	public ResponseEntity<ApiResponse<CustomerEntity>> getCustomerById(@PathVariable Long customerId){
+		CustomerEntity customerById = customerService.findById(customerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Customer with Id " + customerId + " not found!!!"));
+		ApiResponse<CustomerEntity> customerResponse = new ApiResponse<>("Customer Found Successfully!!!", customerById, true);
+			return ResponseEntity.ok(customerResponse);		
 	}
 		
+	@PostMapping("/new")
+    public ResponseEntity<ApiResponse<CustomerEntity>> saveCustomer(@Valid @RequestBody CustomerEntity customerEntity) {
+		CustomerEntity savedCustomer = customerService.saveCustomer(customerEntity);
+		ApiResponse<CustomerEntity> customerResponse = new ApiResponse<>("Customer Saved Successfully!!!", savedCustomer, true);
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerResponse);
+    }	
+
+	@PutMapping("/{customerId}")
+	public ResponseEntity<ApiResponse<CustomerEntity>> updateCustomerById(@PathVariable Long customerId, @Valid @RequestBody CustomerEntity customerEntity){
+		CustomerEntity existingCustomer = customerService.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer with ID " + customerId + " not found!"));
+		existingCustomer.setFname(customerEntity.getFname());
+		existingCustomer.setLname(customerEntity.getLname());
+		existingCustomer.setEmail(customerEntity.getEmail());
+		existingCustomer.setPhoneNo(customerEntity.getPhoneNo());
+		existingCustomer.setAddress(customerEntity.getAddress());
+		existingCustomer.setDob(customerEntity.getDob());
+		existingCustomer.setPanNumber(customerEntity.getPanNumber());
+		existingCustomer.setStatus(customerEntity.getStatus());
+		existingCustomer.setCreatedDate(customerEntity.getCreatedDate());
+		
+		CustomerEntity updatedCustomer = customerService.saveCustomer(existingCustomer);
+		ApiResponse<CustomerEntity> customerResponse = new ApiResponse<>("Customer Updated Successfully!!", updatedCustomer, true);
+		return ResponseEntity.ok(customerResponse);
+	}
+	
 	@DeleteMapping("/{customerId}")
-	public ResponseEntity<?> deleteCustomerById(@PathVariable Long customerId){
-		Optional<CustomerEntity> existingCustomer = customerService.findById(customerId);
-		if(existingCustomer.isPresent()) {
-			customerService.deleteCustomerById(customerId);
-			return ResponseEntity.ok(new ApiResponse<>("Customer Deleted Successfully!!!!", null));
-		}
-		else {
-			return ResponseEntity
-					.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponse<>("Customer with Id " + customerId + " not found!!!", null));
-		}
+	public ResponseEntity<ApiResponse<Object>> deleteCustomerById(@PathVariable Long customerId){
+		customerService.findById(customerId)
+		.orElseThrow(() -> new ResourceNotFoundException("Customer with Id " + customerId + " not found!!!"));
+		
+		customerService.deleteCustomerById(customerId);
+		ApiResponse<Object> customerResponse = new ApiResponse<>("Customer Deleted Successfully!!!!", null, true);
+			return ResponseEntity.ok(customerResponse);
 	}
 }
 

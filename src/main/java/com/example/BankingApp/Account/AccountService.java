@@ -3,7 +3,6 @@ package com.example.BankingApp.Account;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
@@ -19,5 +18,6 @@ public interface AccountService{
 
 	List<AccountEntity> getAccountDetailsByCustomer(Long customerId);
 
+	void deleteAccountById(Long accountId);
 
 }

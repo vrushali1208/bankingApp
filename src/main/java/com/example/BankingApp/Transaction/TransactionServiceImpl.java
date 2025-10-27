@@ -1,6 +1,7 @@
 package com.example.BankingApp.Transaction;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,16 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override
 	public List<TransactionEntity> getTransactionDetailsByAccountId(Long accountId) {
 		return transactionRepository.findByAccountAccountId(accountId);
+	}
+
+	@Override
+	public Optional<TransactionEntity> findById(Long transactionId) {
+		return transactionRepository.findById(transactionId);
+	}
+
+	@Override
+	public void deleteTransactionById(Long transactionId) {
+		transactionRepository.deleteById(transactionId);
 	}
 
 }

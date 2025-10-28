@@ -77,7 +77,7 @@ public class TransactionController {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/accounts/{acountId}")
+	@GetMapping("/accounts/{accountId}")
 	public ResponseEntity<ApiResponse<List<TransactionEntity>>> getTransactionDetailsByAccountId(@PathVariable Long accountId){
 		List<TransactionEntity> transactions = transactionService.getTransactionDetailsByAccountId(accountId);
 		ApiResponse<List<TransactionEntity>> response;

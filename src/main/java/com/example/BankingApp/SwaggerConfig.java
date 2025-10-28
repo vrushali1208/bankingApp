@@ -14,6 +14,6 @@ public class SwaggerConfig {
                 .info(new Info()
                     .title("Banking App")
                     .version("1.0")
-                    .description("API for managing Customers bank details"));
+                    .description("API for managing Customers, Accounts and Transactions"));
     }
 }

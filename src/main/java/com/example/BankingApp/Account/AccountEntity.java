@@ -11,7 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,7 +19,11 @@ import jakarta.persistence.Table;
 public class AccountEntity {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "acc_seq")
+    @SequenceGenerator(
+            name = "acc_seq",
+            sequenceName = "account_seq"
+    )
 	private Long accountId;
 	
 	private String accountNumber;
@@ -36,15 +40,9 @@ public class AccountEntity {
 	
 	@ManyToOne
 	@JoinColumn(name = "customerId")
+	// join column uses mapping the foreign key
 	private CustomerEntity customer;
 	
-	@PrePersist
-	public void prePersist() {
-		if (this.accountNumber == null) {
-			this.accountNumber = AccountNumberGenerator.generateAccountNumber(accountId);
-		}
-	}
-
 	public AccountEntity() {
 		super();
 		// TODO Auto-generated constructor stub

@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -20,7 +21,11 @@ import jakarta.persistence.TemporalType;
 public class TransactionEntity {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trans_seq")
+    @SequenceGenerator(
+            name = "trans_seq",
+            sequenceName = "transaction_seq"
+    )
 	private Long transactionId;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -36,6 +41,7 @@ public class TransactionEntity {
 	
 	@ManyToOne
 	@JoinColumn(name = "accountId")
+	// join column uses mapping the foreign key
 	private AccountEntity account;
 
 	public TransactionEntity() {

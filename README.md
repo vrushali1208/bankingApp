@@ -184,6 +184,47 @@ Feel free to fork this repository and improve it. Suggestions are welcome!
 
 ---
 
+Customer JSON to Save or Create New Customer :
+
+{
+  "fname": "Kajal",
+  "lname": "Varma",
+  "email": "kajal@gmail.com",
+  "phoneNo": "8745633220",
+  "address": "Pune",
+  "dob": "1994-02-05",
+  "panNumber": "KAJS98874",
+  "status": "Active",
+  "createdDate": "2015-10-01"
+}
+
+Account JSON to Save or Create New Account :
+
+{
+  "accountNumber": "BANK001110",
+  "accountType": "Salary",
+  "balance": "50000",
+  "createdDate": "2012-10-01",
+  "accountStatus": "Active",
+  "customer": {
+    "customerId": "23"
+  }
+}
+
+Transation JSON to Save or Create New Transaction :
+
+{
+  "transactionDate": "2012-10-01",
+  "amount": "50000",
+  "transactionType": "Salary",
+  "transactionStatus": "Active",
+  "account": {
+    "accountId": "102"
+  }
+}
+
+
+
 ## 📜 License
 
 This project is open-source and available under the MIT License.

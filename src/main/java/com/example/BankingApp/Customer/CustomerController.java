@@ -29,7 +29,7 @@ public class CustomerController {
 	
 	@GetMapping("/")
 	public String get() {
-		return "Welcome to Customer Banking App";
+		return "Welcome to Customer Controller";
 	}
 	
 	@GetMapping("/all/customers")
